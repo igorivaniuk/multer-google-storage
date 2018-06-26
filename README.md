@@ -1,22 +1,16 @@
-# multer-google-storage
-[![Travis build](https://img.shields.io/travis/ARozar/multer-google-storage.svg)](https://travis-ci.org/ARozar/multer-google-storage/)
+# @igorivaniuk/multer-google-storage
 
 This is a multer storage engine for google's file storage.
 
 ## Installation
-    npm install multer-google-storage --save
-
-or
-
-    yarn add multer-google-storage
-
+    npm install @igorivaniuk/multer-google-storage --save
 
 ## Usage
 ### ES6
 
     import * as  multer from 'multer';
     import * as express from 'express';
-    import MulterGoogleCloudStorage from 'multer-google-storage';
+    import MulterGoogleCloudStorage from '@igorivaniuk/multer-google-storage';
 
     const app = express();
 
@@ -33,7 +27,7 @@ or
 
     var multer = require("multer");
     var express = require("express");
-    var multerGoogleStorage = require("multer-google-storage");
+    var multerGoogleStorage = require("@igorivaniuk/multer-google-storage");
     var app = express();
     var uploadHandler = multer({
         storage: multerGoogleStorage.storageEngine()
