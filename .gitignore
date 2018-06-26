@@ -62,3 +62,4 @@ typings/
 #istanbul
 .nyc_output
 coverage
+.idea

@@ -3,11 +3,13 @@ import { Storage, Bucket, ConfigurationObject } from '@google-cloud/storage';
 import * as uuid from 'uuid/v1';
 const storage: (options?:ConfigurationObject)=>Storage = require('@google-cloud/storage'); 
 
+export type Config = ConfigurationObject & { acl?: string, bucket?: string, filename?: any };
+
 export default class MulterGoogleCloudStorage implements multer.StorageEngine {
 
 	private gcobj: Storage;
 	private gcsBucket: Bucket;
-	private options: ConfigurationObject & { acl?: string, bucket?: string };
+	private options: Config;
 
 	getFilename(req, file, cb) {
     	cb(null,`${uuid()}_${file.originalname}`);
@@ -16,7 +18,7 @@ export default class MulterGoogleCloudStorage implements multer.StorageEngine {
 		cb( null, '' );
 	}
 
-	constructor(opts?: ConfigurationObject & { filename?: any, bucket?:string }) {
+	constructor(opts?: Config) {
 		 opts = opts || {};
 		
 		this.getFilename = (opts.filename || this.getFilename);
@@ -77,7 +79,7 @@ export default class MulterGoogleCloudStorage implements multer.StorageEngine {
 	};
 }
 
-export function storageEngine(opts?: ConfigurationObject & { filename?: any, bucket?:string }){
+export function storageEngine(opts?: Config){
 	
 	return new MulterGoogleCloudStorage(opts);
 }
