@@ -1,9 +1,12 @@
-import * as multer from 'multer';
+/// <reference types="node" />
 import { ConfigurationObject } from '@google-cloud/storage';
+import * as multer from 'multer';
+import { Duplex } from 'stream';
 export declare type Config = ConfigurationObject & {
     acl?: string;
     bucket?: string;
     filename?: any;
+    transformer?: () => Duplex;
 };
 export default class MulterGoogleCloudStorage implements multer.StorageEngine {
     private gcobj;

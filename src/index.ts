@@ -1,5 +1,6 @@
+import { Bucket, ConfigurationObject, Storage } from '@google-cloud/storage';
 import * as multer from 'multer';
-import { Storage, Bucket, ConfigurationObject } from '@google-cloud/storage';
+import { Duplex, Readable } from 'stream';
 import * as uuid from 'uuid/v1';
 const storage: (options?: ConfigurationObject) => Storage = require('@google-cloud/storage');
 
@@ -7,6 +8,7 @@ export type Config = ConfigurationObject & {
   acl?: string;
   bucket?: string;
   filename?: any;
+  transformer?: () => Duplex;
 };
 
 export default class MulterGoogleCloudStorage implements multer.StorageEngine {
@@ -63,15 +65,18 @@ export default class MulterGoogleCloudStorage implements multer.StorageEngine {
           return cb(err);
         }
         const gcFile = this.gcsBucket.file(filename);
-        file.stream
-          .pipe(
-            gcFile.createWriteStream({
-              predefinedAcl: this.options.acl || 'private',
-              metadata: {
-                contentType: file.mimetype,
-              },
-            }),
-          )
+        let writeStream = gcFile.createWriteStream({
+          predefinedAcl: this.options.acl || 'private',
+          metadata: {
+            contentType: file.mimetype,
+          },
+        });
+        let readStream = file.stream as Readable;
+        if (this.options.transformer) {
+          readStream = file.stream.pipe(this.options.transformer());
+        }
+        readStream
+          .pipe(writeStream)
           .on('error', err => cb(err))
           .on('finish', file =>
             cb(null, {
